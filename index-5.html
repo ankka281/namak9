@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Նամակներ ժամանակի միջով · 9/6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Noto+Serif+Armenian:wght@300;400;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+@font-face{font-family:'ArmAllegro';src:url('ArmAllegroU.ttf') format('truetype')}
+
+:root{
+  --bg:#f5efe4;--bg2:#ede3d2;
+  --parch:#f0e6ce;--parch2:#e8d9b8;--parch3:#d4c49a;
+  --ink:#2a1c0a;--ink2:#4a3520;
+  --gold:#a07830;--gold2:#c49a48;
+  --seal:#7a1c1c;--seal2:#9e2a2a;
+  --cream:#faf4e8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Serif Armenian','Cormorant Garamond',serif;overflow-x:hidden;min-height:100vh}
+
+/* ─ BG CANVAS ─ */
+#bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55}
+
+/* ─ STAMP HEADER ─ */
+.stamp-header{
+  position:relative;z-index:2;
+  text-align:center;padding:48px 20px 0;
+  animation:fadeUp .9s .2s both;
+}
+.postmark{
+  display:inline-flex;flex-direction:column;align-items:center;
+  border:2px solid rgba(196,162,82,.35);
+  border-radius:50%;width:110px;height:110px;
+  justify-content:center;
+  position:relative;
+}
+.postmark::before,.postmark::after{
+  content:'';position:absolute;
+  border:1px solid rgba(196,162,82,.2);
+  border-radius:50%;
+  inset:5px;
+}
+.postmark::after{inset:10px}
+.pm-city{font-family:'Cormorant Garamond',serif;font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);opacity:.7}
+.pm-date{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--gold2);line-height:1}
+.pm-class{font-family:'Cormorant Garamond',serif;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);opacity:.6}
+
+/* ─ ENVELOPE HERO ─ */
+.env-hero{
+  position:relative;z-index:2;
+  min-height:85vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px 60px;
+}
+
+/* envelope wrapper */
+.env-wrap{
+  position:relative;
+  width:min(420px,92vw);
+  cursor:pointer;
+  margin-bottom:28px;
+  filter:drop-shadow(0 20px 60px rgba(0,0,0,.7));
+  transition:filter .3s;
+}
+.env-wrap:hover{filter:drop-shadow(0 28px 80px rgba(196,162,82,.25))}
+
+/* envelope body */
+.env-body{
+  width:100%;
+  padding-top:65%;
+  background:var(--parch2);
+  position:relative;
+  border-radius:2px;
+  overflow:hidden;
+}
+/* fold lines */
+.env-body::before{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(135deg, transparent 49.5%, rgba(160,140,100,.35) 50%, transparent 50.5%),
+    linear-gradient(225deg, transparent 49.5%, rgba(160,140,100,.35) 50%, transparent 50.5%);
+}
+/* bottom triangle shadow */
+.env-fold-bottom{
+  position:absolute;bottom:0;left:0;right:0;
+  height:55%;
+  background:var(--parch3);
+  clip-path:polygon(0 100%,50% 0,100% 100%);
+}
+
+/* flap */
+.env-flap-wrap{
+  position:absolute;top:0;left:0;right:0;
+  height:55%;
+  transform-style:preserve-3d;
+  transform-origin:top center;
+  transition:transform .9s cubic-bezier(.4,0,.2,1);
+  z-index:10;
+}
+.env-flap-front{
+  position:absolute;inset:0;
+  background:var(--parch);
+  clip-path:polygon(0 0,50% 68%,100% 0);
+  backface-visibility:hidden;
+}
+.env-flap-front::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.15) 0%,transparent 60%);
+  clip-path:polygon(0 0,50% 68%,100% 0);
+}
+.env-flap-back{
+  position:absolute;inset:0;
+  background:var(--parch2);
+  clip-path:polygon(0 0,50% 68%,100% 0);
+  transform:rotateX(180deg);
+  backface-visibility:hidden;
+}
+
+/* wax seal */
+.wax-seal{
+  position:absolute;
+  top:52%;left:50%;
+  transform:translate(-50%,-50%);
+  width:72px;height:72px;
+  background:radial-gradient(circle at 38% 35%,var(--seal2),var(--seal) 55%,#4a0f0f);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(122,28,28,.6),inset 0 2px 4px rgba(255,255,255,.1);
+  z-index:20;
+  transition:transform .3s,box-shadow .3s;
+}
+.wax-seal:hover{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 6px 28px rgba(122,28,28,.8),inset 0 2px 4px rgba(255,255,255,.15)}
+.seal-text{
+  font-family:'ArmAllegro','Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:700;
+  color:rgba(240,230,210,.9);
+  text-shadow:0 1px 2px rgba(0,0,0,.4);
+  letter-spacing:.05em;
+}
+.seal-ring{
+  position:absolute;inset:4px;
+  border:1px solid rgba(240,220,180,.2);
+  border-radius:50%;
+  pointer-events:none;
+}
+
+/* left/right side triangles */
+.env-side-l,.env-side-r{
+  position:absolute;top:0;bottom:0;width:50%;
+  background:var(--parch2);
+  filter:brightness(.93);
+}
+.env-side-l{left:0;clip-path:polygon(0 0,100% 50%,0 100%)}
+.env-side-r{right:0;clip-path:polygon(100% 0,0 50%,100% 100%)}
+
+/* click hint */
+.click-hint{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.9rem;letter-spacing:.12em;
+  color:var(--gold);opacity:.6;
+  text-align:center;
+  animation:pulse 2.5s ease-in-out infinite;
+}
+.hero-title-pre{
+  font-family:'ArmAllegro','Cormorant Garamond',serif;
+  font-size:clamp(1rem,2.5vw,1.3rem);
+  letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);opacity:.7;
+  text-align:center;margin-bottom:14px;
+  animation:fadeUp .8s .4s both;
+}
+
+/* ENVELOPE OPENED STATE */
+.env-wrap.opened .env-flap-wrap{transform:rotateX(-180deg)}
+.env-wrap.opened .wax-seal{opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.7)}
+.env-wrap.opened .click-hint{opacity:0}
+
+/* ─ LETTER ─ */
+.letter-section{
+  position:relative;z-index:2;
+  display:flex;justify-content:center;
+  padding:0 20px 80px;
+  opacity:0;transform:translateY(40px);
+  transition:opacity .9s .4s,transform .9s .4s;
+  pointer-events:none;
+}
+.letter-section.visible{opacity:1;transform:none;pointer-events:auto}
+
+.letter-paper{
+  max-width:680px;width:100%;
+  background:linear-gradient(170deg,var(--cream) 0%,var(--parch) 40%,#ede0c4 100%);
+  border-radius:2px;
+  padding:clamp(36px,6vw,64px) clamp(28px,6vw,68px);
+  position:relative;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),4px 4px 0 rgba(160,140,100,.2),inset 0 0 60px rgba(180,150,80,.08);
+  color:var(--ink);
+}
+/* paper lines */
+.letter-paper::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(transparent,transparent 31px,rgba(160,130,80,.1) 31px,rgba(160,130,80,.1) 32px);
+  border-radius:2px;pointer-events:none;
+}
+/* left margin line */
+.letter-paper::after{
+  content:'';position:absolute;top:0;bottom:0;left:72px;
+  width:1px;background:rgba(196,100,100,.12);
+  pointer-events:none;
+}
+
+.letter-stamp{
+  position:absolute;top:20px;right:24px;
+  width:64px;height:80px;
+  border:2px solid var(--gold);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:4px;
+}
+.letter-stamp::before{content:'✉';font-size:1.6rem;line-height:1;color:var(--ink2);opacity:.5}
+.stamp-val{font-family:'Cormorant Garamond',serif;font-size:.6rem;letter-spacing:.12em;color:var(--ink2);opacity:.6;text-transform:uppercase}
+
+.letter-date-line{
+  font-family:'Caveat',cursive;font-size:1rem;
+  color:var(--ink2);opacity:.6;
+  margin-bottom:28px;
+}
+
+.letter-greeting{
+  font-family:'Noto Serif Armenian',serif;
+  font-size:clamp(1rem,2.5vw,1.15rem);
+  font-weight:600;color:var(--ink);
+  margin-bottom:24px;
+  line-height:1.6;
+}
+
+.letter-poem{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(1.1rem,2.8vw,1.35rem);
+  line-height:1.85;color:var(--ink2);
+  border-left:2px solid rgba(196,162,82,.5);
+  padding:16px 0 16px 24px;
+  margin:28px 0;
+  background:rgba(196,162,82,.04);
+}
+
+.letter-body{
+  font-family:'Noto Serif Armenian',serif;
+  font-size:clamp(.9rem,2vw,1rem);
+  line-height:1.95;color:var(--ink);
+  margin-bottom:28px;
+}
+
+/* date card inside letter */
+.letter-date-card{
+  border:1px solid rgba(100,80,40,.25);
+  border-radius:2px;
+  padding:20px 28px;
+  background:rgba(196,162,82,.07);
+  display:flex;gap:0;margin:28px 0;
+  justify-content:center;
+}
+.ldc-item{flex:1;text-align:center;padding:12px 8px;position:relative}
+.ldc-item+.ldc-item::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:rgba(100,80,40,.2)}
+.ldc-num{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:600;color:var(--seal);display:block;line-height:1}
+.ldc-lbl{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2);opacity:.6;margin-top:4px;display:block}
+
+/* countdown */
+.ltr-countdown{text-align:center;margin:20px 0 28px}
+.ltr-cd-lbl{font-family:'Cormorant Garamond',serif;font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ink2);opacity:.5;margin-bottom:10px}
+.ltr-cd{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.ltr-cd-box{text-align:center;min-width:52px}
+.ltr-cd-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--seal);line-height:1;display:block}
+.ltr-cd-unit{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink2);opacity:.5}
+.ltr-cd-sep{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--ink2);opacity:.25;line-height:1}
+
+.letter-closing{
+  font-family:'Noto Serif Armenian',serif;
+  font-size:clamp(.9rem,2vw,1rem);
+  line-height:1.85;color:var(--ink);
+  margin-bottom:32px;
+}
+
+.letter-sign-wrap{text-align:right;margin-top:28px;padding-top:20px;border-top:1px solid rgba(100,80,40,.15)}
+.sign-from{font-family:'Cormorant Garamond',serif;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink2);opacity:.5;display:block;margin-bottom:6px}
+.sign-name{font-family:'Caveat',cursive;font-size:clamp(1.4rem,4vw,2rem);color:var(--ink);font-weight:600}
+.sign-hearts{display:block;margin-top:4px;font-size:.95rem;color:var(--seal2);letter-spacing:4px}
+
+/* ─ GALLERY ─ */
+.gallery-section{position:relative;z-index:2;padding:0 0 100px}
+.sec-eyebrow{text-align:center;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);opacity:.6;margin-bottom:8px}
+.sec-title{text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.6rem,4vw,2.4rem);color:var(--ink);margin-bottom:12px}
+.gallery-hint{text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.82rem;color:var(--gold);opacity:.4;margin-bottom:32px;letter-spacing:.07em}
+
+.polaroid-track-wrap{overflow-x:auto;overflow-y:visible;padding:20px 0 70px;cursor:grab;user-select:none;scrollbar-width:none}
+.polaroid-track-wrap::-webkit-scrollbar{display:none}
+.polaroid-track-wrap:active{cursor:grabbing}
+.polaroid-track{display:flex;gap:40px;padding:30px 80px;width:max-content}
+
+.polaroid{flex-shrink:0;width:210px;background:#fdf8f0;padding:13px 13px 50px;box-shadow:0 8px 32px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.3);position:relative;cursor:pointer;transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s}
+.polaroid:nth-child(6n+1){transform:rotate(-3deg) translateY(4px)}
+.polaroid:nth-child(6n+2){transform:rotate(1.5deg) translateY(-8px)}
+.polaroid:nth-child(6n+3){transform:rotate(-1deg) translateY(10px)}
+.polaroid:nth-child(6n+4){transform:rotate(3deg) translateY(-4px)}
+.polaroid:nth-child(6n+5){transform:rotate(-2deg) translateY(6px)}
+.polaroid:nth-child(6n+6){transform:rotate(1deg) translateY(-10px)}
+.polaroid:hover{transform:rotate(0deg) translateY(-20px) scale(1.06)!important;box-shadow:0 28px 70px rgba(0,0,0,.7),0 0 0 2px rgba(196,162,82,.45);z-index:20}
+
+.polaroid-img{width:100%;aspect-ratio:1;background:#e0d4c0;position:relative;overflow:hidden}
+.polaroid-img img{width:100%;height:100%;object-fit:cover;display:none}
+.polaroid-img img.loaded{display:block}
+.p-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(145deg,#e8ddd0,#d4c8b8)}
+.p-ph-icon{font-size:2.2rem;opacity:.3}
+.p-ph-txt{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:#8b7355;opacity:.55;font-family:'Cormorant Garamond',serif}
+.p-add-btn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);border:none;cursor:pointer;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:transparent;font-family:'Cormorant Garamond',serif;transition:background .2s,color .2s}
+.polaroid-img:hover .p-add-btn{background:rgba(0,0,0,.22);color:rgba(255,255,255,.85)}
+.p-cap{position:absolute;bottom:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:center;padding:0 12px}
+.p-cap input{font-family:'Caveat',cursive;font-size:1.08rem;color:#5c4a2a;background:transparent;border:none;outline:none;width:100%;text-align:center}
+.p-cap input::placeholder{color:#b0976a;opacity:.55}
+
+#lightbox{position:fixed;inset:0;z-index:999;background:rgba(8,4,2,.93);display:none;align-items:center;justify-content:center;cursor:zoom-out;backdrop-filter:blur(10px)}
+#lightbox.open{display:flex;animation:fadeIn .22s}
+#lb-img{max-width:90vw;max-height:88vh;object-fit:contain;box-shadow:0 30px 100px rgba(0,0,0,.8)}
+#lb-close{position:fixed;top:26px;right:34px;font-size:2rem;color:var(--gold);cursor:pointer;opacity:.7;background:none;border:none;line-height:1;transition:opacity .2s}
+#lb-close:hover{opacity:1}
+#photo-file-input{display:none}
+
+/* ─ WISHES ─ */
+.wishes-section{position:relative;z-index:2;padding:0 40px 100px;max-width:1000px;margin:0 auto}
+.wish-form{max-width:560px;margin:0 auto 56px;background:rgba(240,230,210,.85);border:1px solid rgba(160,120,48,.2);border-radius:3px;padding:clamp(24px,4vw,40px);box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.wish-form h3{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.2rem,3vw,1.7rem);color:var(--ink);text-align:center;margin-bottom:24px}
+.wish-field{width:100%;background:rgba(255,250,240,.8);border:1px solid rgba(160,120,48,.25);border-radius:2px;color:var(--ink);font-family:'Noto Serif Armenian',serif;font-size:.95rem;padding:12px 16px;outline:none;transition:border-color .2s;margin-bottom:14px;resize:none}
+.wish-field::placeholder{color:rgba(80,60,30,.4)}
+.wish-field:focus{border-color:rgba(196,162,82,.5)}
+.wish-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,rgba(196,162,82,.18),rgba(196,162,82,.07));border:1px solid rgba(196,162,82,.35);border-radius:2px;color:var(--gold2);font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .25s,transform .15s}
+.wish-btn:hover{background:rgba(196,162,82,.22);transform:translateY(-1px)}
+
+.wishes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:22px}
+.sticky{padding:22px 20px 20px;border-radius:2px 14px 2px 2px;box-shadow:3px 5px 22px rgba(0,0,0,.4);position:relative;overflow:hidden;animation:stickyIn .4s cubic-bezier(.34,1.56,.64,1) both;min-height:160px}
+.sticky::before{content:'';position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 28px 28px 0;border-color:transparent rgba(0,0,0,.12) transparent transparent}
+.sticky-name{font-family:'Caveat',cursive;font-size:1.3rem;font-weight:600;margin-bottom:10px;display:block;opacity:.9}
+.sticky-text{font-family:'Caveat',cursive;font-size:1.05rem;line-height:1.55;opacity:.82}
+.sticky-time{position:absolute;bottom:10px;right:14px;font-family:'Cormorant Garamond',serif;font-size:.62rem;letter-spacing:.1em;opacity:.4}
+.sticky-del{position:absolute;top:8px;right:10px;font-size:.65rem;cursor:pointer;opacity:0;transition:opacity .2s;background:none;border:none;color:inherit;padding:2px 4px}
+.sticky:hover .sticky-del{opacity:.4}.sticky-del:hover{opacity:.85!important}
+.sy{background:#f5e870;color:#3a3010}.sp{background:#e8c5f0;color:#3a1a45}
+.sb{background:#c5dff0;color:#102835}.sg{background:#c5f0d4;color:#103520}
+.sr{background:#f0c5c5;color:#350f0f}.so{background:#f5d4a0;color:#3a2008}
+.no-wishes{grid-column:1/-1;text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--gold);opacity:.4;padding:40px 0}
+
+/* ─ FOOTER ─ */
+footer{position:relative;z-index:2;text-align:center;padding:40px 20px;border-top:1px solid rgba(196,162,82,.1)}
+.footer-class{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--gold2);opacity:.7}
+.footer-year{font-family:'Cormorant Garamond',serif;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);opacity:.35;margin-top:6px}
+.ornament{font-size:1.2rem;color:var(--gold);opacity:.4;margin:12px 0;display:block}
+
+/* ─ ANIMATIONS ─ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes stickyIn{from{opacity:0;transform:scale(.82)rotate(-4deg)}to{opacity:1;transform:scale(1)rotate(var(--r,0deg))}}
+@keyframes envDrop{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+.env-wrap{animation:envDrop .9s .6s both}
+
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s}
+.reveal.visible{opacity:1;transform:none}
+
+@media(max-width:540px){
+  .polaroid-track{padding:20px 28px;gap:24px}.polaroid{width:165px}
+  .wishes-section{padding:0 16px 80px}
+  .letter-paper::after{display:none}
+  .ldc-num{font-size:1.6rem}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- STAMP HEADER -->
+<div class="stamp-header">
+  <div class="postmark">
+    <span class="pm-city">Երևան</span>
+    <span class="pm-date">22.05.2026</span>
+    <span class="pm-class">Դաս 9/6</span>
+  </div>
+</div>
+
+<!-- ENVELOPE HERO -->
+<section class="env-hero">
+  <p class="hero-title-pre">Նամակներ ժամանակի միջով</p>
+
+  <div class="env-wrap" id="envWrap">
+    <div class="env-body">
+      <div class="env-side-l"></div>
+      <div class="env-side-r"></div>
+      <div class="env-fold-bottom"></div>
+    </div>
+    <div class="env-flap-wrap" id="envFlap">
+      <div class="env-flap-front"></div>
+      <div class="env-flap-back"></div>
+    </div>
+    <div class="wax-seal" id="waxSeal">
+      <span class="seal-text">9/6</span>
+      <div class="seal-ring"></div>
+    </div>
+  </div>
+
+  <p class="click-hint" id="clickHint">✦ Կտտացրու կնիքին ✦</p>
+</section>
+
+<!-- LETTER -->
+<section class="letter-section" id="letterSection">
+  <div class="letter-paper">
+    <div class="letter-stamp"><span class="stamp-val">2026</span></div>
+
+    <p class="letter-date-line">Երևան, Մայիսի 22, 2026</p>
+
+    <p class="letter-greeting">Հարգելի՛ ուսուցիչներ,</p>
+
+    <p class="letter-body">
+      Մենք սիրով հրավիրում ենք Ձեզ՝ ներկա գտնվելու մեր ավարտական հանդիսությանը,
+      որը կրում է <strong>«Նամակներ ժամանակի միջով»</strong> խորագիրը։
+    </p>
+
+    <div class="letter-poem">
+      Նամակ... իսկ ի՞նչ է նամակը։<br><br>
+      Նամակը միայն գրված մի քանի բառ չէ։<br>
+      Այն ուղարկված սիրտ է, մյուս սրտին հասնելու փորձ։<br><br>
+      Նամակը պարզապես բառերի շարան մի՛ դիտեք։<br>
+      Այն մի մարդուց մյուսին հասնելու ձգտում է։<br>
+      Այն հիշողություն է, խորհուրդ, խոստովանություն։
+    </div>
+
+    <p class="letter-body">
+      Այս երեկո մենք միասին կբացենք մեր դպրոցական կյանքի ամենաանկեղծ
+      նամակները՝ գրված սիրով, ջերմությամբ և երազանքներով։
+    </p>
+
+    <div class="letter-date-card">
+      <div class="ldc-item"><span class="ldc-num">22</span><span class="ldc-lbl">Մայիս</span></div>
+      <div class="ldc-item"><span class="ldc-num">2026</span><span class="ldc-lbl">Թիվ</span></div>
+      <div class="ldc-item"><span class="ldc-num">16:30</span><span class="ldc-lbl">Ժամ</span></div>
+    </div>
+
+    <div class="ltr-countdown">
+      <p class="ltr-cd-lbl">Մնացել է</p>
+      <div class="ltr-cd">
+        <div class="ltr-cd-box"><span class="ltr-cd-num" id="cd-days">—</span><span class="ltr-cd-unit">Օր</span></div>
+        <span class="ltr-cd-sep">:</span>
+        <div class="ltr-cd-box"><span class="ltr-cd-num" id="cd-hours">—</span><span class="ltr-cd-unit">Ժամ</span></div>
+        <span class="ltr-cd-sep">:</span>
+        <div class="ltr-cd-box"><span class="ltr-cd-num" id="cd-mins">—</span><span class="ltr-cd-unit">Րոպե</span></div>
+        <span class="ltr-cd-sep">:</span>
+        <div class="ltr-cd-box"><span class="ltr-cd-num" id="cd-secs">—</span><span class="ltr-cd-unit">Վայրկ.</span></div>
+      </div>
+    </div>
+
+    <p class="letter-closing">
+      Ձեր ներկայությունն ու աջակցությունը կարևոր են մեզ համար այս հուզիչ
+      ու հիշարժան օրը։<br><br>
+      <em>Ծրարված հուշեր, որոնք դառնում են ապագայի հիմք...</em><br><br>
+      Սպասում ենք Ձեզ <strong>մայիսի 22-ին, ժամը 16։30</strong>,
+      դպրոցի հանդիսությունների դահլիճում։
+    </p>
+
+    <div class="letter-sign-wrap">
+      <span class="sign-from">Ձեզ սիրող</span>
+      <span class="sign-name">9/6 դասարանի աշակերտները</span>
+      <span class="sign-hearts">♥ ♥ ♥</span>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section reveal">
+  <p class="sec-eyebrow">Մեր ուղին</p>
+  <h2 class="sec-title">Հիշողություններ</h2>
+  <p class="gallery-hint">← Scroll · Կտտացրու` ֆոտո ավելացնելու →</p>
+  <div class="polaroid-track-wrap" id="track-wrap">
+    <div class="polaroid-track" id="polaroid-track"></div>
+  </div>
+</section>
+
+<div id="lightbox"><button id="lb-close">✕</button><img id="lb-img" src="" alt=""/></div>
+<input type="file" id="photo-file-input" accept="image/*"/>
+
+<!-- WISHES -->
+<section class="wishes-section reveal">
+  <p class="sec-eyebrow" style="text-align:center">Ձեր խոսքը</p>
+  <h2 class="sec-title">Ցանկությունների պատ</h2>
+  <div class="wish-form">
+    <h3>Թողե՛ք ձեր հետքը ✦</h3>
+    <input class="wish-field" id="wish-name" type="text" placeholder="Ձեր անունը…" maxlength="40"/>
+    <textarea class="wish-field" id="wish-text" rows="3" placeholder="Ձեր ցանկությունը կամ հիշողությունը…" maxlength="200"></textarea>
+    <button class="wish-btn" id="wish-submit">✦ Ավելացնել ✦</button>
+  </div>
+  <div class="wishes-grid" id="wishes-grid"></div>
+</section>
+
+<footer>
+  <span class="ornament">✉ · ✉ · ✉</span>
+  <p class="footer-class">9/6 դասարան · Նամակներ ժամանակի միջով</p>
+  <p class="footer-year">2026 · Ս Ե Ր Ո Վ</p>
+</footer>
+
+<script>
+/* BG CANVAS — floating envelopes */
+(()=>{
+  const c=document.getElementById('bg-canvas'),x=c.getContext('2d');
+  let W,H,items=[];
+  const resize=()=>{W=c.width=innerWidth;H=c.height=innerHeight};
+
+  function makeItems(n){
+    items=[];
+    for(let i=0;i<n;i++){
+      items.push({
+        x:Math.random()*W, y:Math.random()*H,
+        size:Math.random()*18+8,
+        vx:(Math.random()-.5)*.4,
+        vy:Math.random()*.3+.1,
+        rot:Math.random()*Math.PI*2,
+        vr:(Math.random()-.5)*.008,
+        a:Math.random()*.4+.05,
+        type:Math.random()>.5?'env':'line'
+      });
+    }
+  }
+
+  function drawEnv(ctx,size,alpha){
+    ctx.globalAlpha=alpha;
+    ctx.strokeStyle='rgba(196,162,82,1)';
+    ctx.lineWidth=1;
+    // body
+    ctx.strokeRect(-size/2,-size*.35,size,size*.7);
+    // flap V
+    ctx.beginPath();ctx.moveTo(-size/2,-size*.35);ctx.lineTo(0,size*.1);ctx.lineTo(size/2,-size*.35);ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+  function drawLine(ctx,size,alpha){
+    ctx.globalAlpha=alpha*.5;
+    ctx.strokeStyle='rgba(196,162,82,1)';
+    ctx.lineWidth=.8;
+    for(let i=0;i<3;i++){
+      const y=-size*.2+i*size*.2;
+      const w=size*(i===0?.6:.9);
+      ctx.beginPath();ctx.moveTo(-w/2,y);ctx.lineTo(w/2,y);ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function tick(){
+    x.clearRect(0,0,W,H);
+    items.forEach(it=>{
+      it.x+=it.vx;it.y+=it.vy;it.rot+=it.vr;
+      if(it.y>H+30)it.y=-30;
+      if(it.x>W+30)it.x=-30;
+      if(it.x<-30)it.x=W+30;
+      x.save();x.translate(it.x,it.y);x.rotate(it.rot);
+      if(it.type==='env')drawEnv(x,it.size,it.a);
+      else drawLine(x,it.size,it.a);
+      x.restore();
+    });
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('resize',()=>{resize();makeItems(35)});
+  resize();makeItems(35);tick();
+})();
+
+/* ENVELOPE OPEN */
+const envWrap=document.getElementById('envWrap');
+const letterSection=document.getElementById('letterSection');
+const clickHint=document.getElementById('clickHint');
+let opened=false;
+
+envWrap.addEventListener('click',()=>{
+  if(opened)return;
+  opened=true;
+  envWrap.classList.add('opened');
+  clickHint.style.opacity='0';
+  setTimeout(()=>{
+    letterSection.classList.add('visible');
+    letterSection.scrollIntoView({behavior:'smooth',block:'start'});
+  },700);
+});
+
+/* COUNTDOWN */
+(()=>{
+  const tgt=new Date('2026-05-22T16:30:00');
+  const p=n=>String(n).padStart(2,'0');
+  const tick=()=>{
+    const d=tgt-new Date();
+    if(d<=0){['days','hours','mins','secs'].forEach(id=>document.getElementById('cd-'+id).textContent='00');return}
+    document.getElementById('cd-days').textContent=p(Math.floor(d/864e5));
+    document.getElementById('cd-hours').textContent=p(Math.floor(d%864e5/36e5));
+    document.getElementById('cd-mins').textContent=p(Math.floor(d%36e5/6e4));
+    document.getElementById('cd-secs').textContent=p(Math.floor(d%6e4/1e3));
+  };tick();setInterval(tick,1000);
+})();
+
+/* SCROLL REVEAL */
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+/* POLAROID GALLERY */
+const CAP_K='96v3_caps',PHO_K='96v3_phos';
+  const defaultPhotos=[
+  'photo_5212930596504544661_y.jpg',
+  'photo_5212930596504544662_y.jpg',
+  'photo_5212930596504544663_y.jpg',
+  'photo_5212930596504544664_y.jpg',
+  'photo_5212930596504544665_y.jpg',
+  ''
+];
+let caps={},phos={};
+try{caps=JSON.parse(localStorage.getItem(CAP_K))||{}}catch{}
+try{phos=JSON.parse(localStorage.getItem(PHO_K))||{}}catch{}
+const track=document.getElementById('polaroid-track');
+const fInp=document.getElementById('photo-file-input');
+let aIdx=null;
+for(let i=0;i<6;i++){
+  const pol=document.createElement('div');pol.className='polaroid';
+  const ib=document.createElement('div');ib.className='polaroid-img';
+  const img=document.createElement('img');
+  const src=phos[i]||defaultPhotos[i];if(src){img.src=src;img.className='loaded'}
+  ib.appendChild(img);
+  const ph=document.createElement('div');ph.className='p-ph';
+  ph.innerHTML='<span class="p-ph-icon">📷</span><span class="p-ph-txt">Ավելացնել</span>';
+  if(phos[i])ph.style.display='none';
+  ib.appendChild(ph);
+  const ab=document.createElement('button');ab.className='p-add-btn';ab.textContent='+ Ավելացնել';
+  ab.addEventListener('click',e=>{e.stopPropagation();aIdx=i;fInp.click()});
+  ib.appendChild(ab);
+  const cd=document.createElement('div');cd.className='p-cap';
+  const ci=document.createElement('input');ci.type='text';ci.maxLength=30;ci.placeholder='Ստորագրություն…';ci.value=caps[i]||'';
+  ci.addEventListener('input',()=>{caps[i]=ci.value;try{localStorage.setItem(CAP_K,JSON.stringify(caps))}catch{}});
+  ci.addEventListener('click',e=>e.stopPropagation());ci.addEventListener('mousedown',e=>e.stopPropagation());
+  cd.appendChild(ci);pol.appendChild(ib);pol.appendChild(cd);
+  pol.addEventListener('click',()=>{const s=phos[i]||defaultPhotos[i];if(!s)return;document.getElementById('lb-img').src=s;document.getElementById('lightbox').classList.add('open')});
+  track.appendChild(pol);
+}
+fInp.addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f||aIdx===null)return;
+  const rd=new FileReader();rd.onload=ev=>{
+    const src=ev.target.result;phos[aIdx]=src;
+    try{localStorage.setItem(PHO_K,JSON.stringify(phos))}catch{}
+    const pol=track.children[aIdx];const img=pol.querySelector('img');
+    img.src=src;img.className='loaded';pol.querySelector('.p-ph').style.display='none';
+  };rd.readAsDataURL(f);fInp.value='';
+});
+const lb=document.getElementById('lightbox');
+lb.addEventListener('click',()=>lb.classList.remove('open'));
+document.getElementById('lb-close').addEventListener('click',e=>{e.stopPropagation();lb.classList.remove('open')});
+(()=>{
+  const wrap=document.getElementById('track-wrap');
+  let dn=false,sx,sl;
+  wrap.addEventListener('mousedown',e=>{dn=true;sx=e.pageX-wrap.offsetLeft;sl=wrap.scrollLeft});
+  wrap.addEventListener('mouseleave',()=>dn=false);wrap.addEventListener('mouseup',()=>dn=false);
+  wrap.addEventListener('mousemove',e=>{if(!dn)return;e.preventDefault();wrap.scrollLeft=sl-(e.pageX-wrap.offsetLeft-sx)*1.2});
+  let tx=0;
+  wrap.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+  wrap.addEventListener('touchmove',e=>{wrap.scrollLeft-=e.touches[0].clientX-tx;tx=e.touches[0].clientX},{passive:true});
+})();
+
+/* WISHES */
+const WK='96v3_wishes';
+const COLORS=['sy','sp','sb','sg','sr','so'];
+const ROTS=[-2.5,-1,0,1.5,2,-1.5];
+const loadW=()=>{try{return JSON.parse(localStorage.getItem(WK))||[]}catch{return[]}};
+const saveW=arr=>{try{localStorage.setItem(WK,JSON.stringify(arr))}catch{}};
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function renderWishes(){
+  const g=document.getElementById('wishes-grid');const w=loadW();g.innerHTML='';
+  if(!w.length){g.innerHTML='<p class="no-wishes">Առաջինը եղիր — թողիր ձեր ցանկությունը ✦</p>';return}
+  [...w].reverse().forEach((it,i)=>{
+    const col=COLORS[i%COLORS.length],rot=ROTS[i%ROTS.length];
+    const d=document.createElement('div');d.className=`sticky ${col}`;
+    d.style.cssText=`--r:${rot}deg;transform:rotate(${rot}deg)`;
+    d.innerHTML=`<span class="sticky-name">${esc(it.name)}</span><span class="sticky-text">${esc(it.text)}</span><span class="sticky-time">${it.time}</span><button class="sticky-del" data-id="${it.id}">✕</button>`;
+    g.appendChild(d);
+  });
+  g.querySelectorAll('.sticky-del').forEach(btn=>{
+    btn.addEventListener('click',()=>{saveW(loadW().filter(x=>x.id!==btn.dataset.id));renderWishes()});
+  });
+}
+document.getElementById('wish-submit').addEventListener('click',()=>{
+  const name=document.getElementById('wish-name').value.trim();
+  const text=document.getElementById('wish-text').value.trim();
+  if(!name||!text)return;
+  const arr=loadW();arr.push({id:Date.now().toString(),name,text,time:new Date().toLocaleDateString('hy-AM',{day:'numeric',month:'short'})});
+  saveW(arr);document.getElementById('wish-name').value='';document.getElementById('wish-text').value='';
+  renderWishes();document.getElementById('wishes-grid').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+document.getElementById('wish-name').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('wish-text').focus()});
+renderWishes();
+</script>
+</body>
+</html>
