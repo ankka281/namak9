@@ -606,6 +606,14 @@ document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
 
 /* POLAROID GALLERY */
 const CAP_K='96v3_caps',PHO_K='96v3_phos';
+  const defaultPhotos=[
+  'photo_5212930596504544661_y.jpg',
+  'photo_5212930596504544662_y.jpg',
+  'photo_5212930596504544663_y.jpg',
+  'photo_5212930596504544664_y.jpg',
+  'photo_5212930596504544665_y.jpg',
+  ''
+];
 let caps={},phos={};
 try{caps=JSON.parse(localStorage.getItem(CAP_K))||{}}catch{}
 try{phos=JSON.parse(localStorage.getItem(PHO_K))||{}}catch{}
@@ -616,7 +624,7 @@ for(let i=0;i<6;i++){
   const pol=document.createElement('div');pol.className='polaroid';
   const ib=document.createElement('div');ib.className='polaroid-img';
   const img=document.createElement('img');
-  if(phos[i]){img.src=phos[i];img.className='loaded'}
+  const src=phos[i]||defaultPhotos[i];if(src){img.src=src;img.className='loaded'}
   ib.appendChild(img);
   const ph=document.createElement('div');ph.className='p-ph';
   ph.innerHTML='<span class="p-ph-icon">📷</span><span class="p-ph-txt">Ավելացնել</span>';
